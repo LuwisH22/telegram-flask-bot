@@ -23,11 +23,10 @@ def get_price(ticker):
 
 def generate_santai_message():
     now = datetime.datetime.now(WIB).strftime("%d %B %Y")
-    msg = f"📢 INFORMASI SAHAM HARI INI ({now})\n====================="
+    msg = f"📊 INFORMASI SAHAM HARI INI ({now})\n===================="
     for ticker in STOCK_GROUPS["Santai"]:
         price = get_price(ticker)
-        msg += f"\n\n🔸 {ticker}\n💰 {price}\n━━━━━━━━━━━━━━━"
-        time.sleep(1)
+        msg += f"\n\n♦ {ticker}\n💰 {price}\n────────────"
     return msg
 
 def generate_options_prices():
@@ -35,8 +34,7 @@ def generate_options_prices():
     msg = f"📢 SAHAM OPTIONS (Harga Saja) {now}\n====================="
     for ticker in STOCK_GROUPS["Options"]:
         price = get_price(ticker)
-        msg += f"\n\n🔸 {ticker}\n💰 {price}\n━━━━━━━━━━━━━━━"
-        time.sleep(1)
+        msg += f"\n\n♦ {ticker}\n💰 {price}\n━━━━━━━━━━━━━━━"
     return msg
 
 def get_news_only():
