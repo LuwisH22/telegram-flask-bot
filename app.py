@@ -9,7 +9,7 @@ app = Flask(__name__)
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # Webhook endpoint
-@app.route(f"/{BOT_TOKEN}", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def telegram_webhook():
     data = request.get_json()
 
