@@ -2,7 +2,7 @@ from flask import Flask, request
 import requests
 import os
 
-from trading_logic import generate_santai_message, generate_options_prices, get_news_only
+from bot_logic import generate_santai_message, generate_options_prices, get_news_only
 
 app = Flask(__name__)
 
