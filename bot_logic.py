@@ -1,25 +1,43 @@
+import datetime
+import pytz
+import time
 import requests
 import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "7353553539:AAFl4gLI9AdEThliRVJ1tfUs9lfMeUOOtF4")
-API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+TWELVE_API_KEY = os.getenv("TWELVE_API_KEY")
+WIB = pytz.timezone("Asia/Jakarta")
 
-def send_message(chat_id, text):
-    data = {"chat_id": chat_id, "text": text}
-    requests.post(API_URL, data=data)
+STOCK_GROUPS = {
+    "Santai": ["AMD", "SPY", "AMZN", "VOO", "NVDA"],
+    "Options": ["XOM", "CVX", "LMT", "RTX", "QQQ", "ARKK", "TSLA"]
+}
 
-def handle_command(chat_id, text):
-    if text == "/saham_santai":
-        message = "📢 Saham Santai: AMD, SPY, AMZN, VOO, NVDA\n(harga akan ditampilkan di versi full)"
-        send_message(chat_id, message)
+def get_price(ticker):
+    url = f"https://api.twelvedata.com/price?symbol={ticker}&apikey={TWELVE_API_KEY}"
+    try:
+        r = requests.get(url)
+        data = r.json()
+        return float(data["price"]) if "price" in data else "N/A"
+    except:
+        return "N/A"
 
-    elif text == "/saham_options":
-        message = "📢 Saham Options: XOM, CVX, LMT, dst\n(harga saja tanpa analisa)"
-        send_message(chat_id, message)
+def generate_santai_message():
+    now = datetime.datetime.now(WIB).strftime("%d %B %Y")
+    msg = f"📢 INFORMASI SAHAM HARI INI ({now})\n====================="
+    for ticker in STOCK_GROUPS["Santai"]:
+        price = get_price(ticker)
+        msg += f"\n\n🔸 {ticker}\n💰 {price}\n━━━━━━━━━━━━━━━"
+        time.sleep(1)
+    return msg
 
-    elif text == "/news":
-        message = "🌐 Berita global terbaru akan tampil di sini."
-        send_message(chat_id, message)
+def generate_options_prices():
+    now = datetime.datetime.now(WIB).strftime("%d %B %Y")
+    msg = f"📢 SAHAM OPTIONS (Harga Saja) {now}\n====================="
+    for ticker in STOCK_GROUPS["Options"]:
+        price = get_price(ticker)
+        msg += f"\n\n🔸 {ticker}\n💰 {price}\n━━━━━━━━━━━━━━━"
+        time.sleep(1)
+    return msg
 
-    else:
-        send_message(chat_id, "Perintah tidak dikenali. Gunakan: /saham_santai /saham_options /news")
+def get_news_only():
+    return "📰 Pasar global stabil. Belum ada eskalasi geopolitik besar."
